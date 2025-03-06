@@ -39,3 +39,11 @@ def update_review(entity_id: int, review_id: int, review: schemas.ReviewUpdate, 
         raise HTTPException(status_code=404, detail="Review not found")
     updated_review = crud.update_review(db, review_id, review)
     return updated_review
+
+@router.delete("/v1/entities/{entity_id}", response_model=dict)
+def delete_entity(entity_id: int, db: Session = Depends(get_db)):
+    entity = crud.get_entity_by_id(db, entity_id)
+    if not entity:
+        raise HTTPException(status_code=404, detail="Entity not found")
+    crud.delete_entity_and_reviews(db, entity_id)
+    return {"message": "Entity and associated reviews deleted successfully"}

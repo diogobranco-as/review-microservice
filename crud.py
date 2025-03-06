@@ -8,8 +8,8 @@ def create_review(db: Session, review_data: schemas.ReviewCreate):
     db.refresh(review)
     return review
 
-def get_reviews_by_product(db: Session, product_id: str):
-    return db.query(models.Review).filter(models.Review.product_id == product_id).all()
+def get_reviews_by_entity(db: Session, entity_id: str):
+    return db.query(models.Review).filter(models.Review.entity_id == entity_id).all()
 
 def delete_review(db: Session, review_id: int):
     review = db.query(models.Review).filter(models.Review.id == review_id).first()
@@ -26,3 +26,10 @@ def update_review(db: Session, review_id: int, review_data: schemas.ReviewUpdate
         db.commit()
         db.refresh(review)
     return review
+
+def create_entity(db: Session, entity_data: schemas.EntityCreate):
+    entity = models.Entity(**entity_data.model_dump())
+    db.add(entity)
+    db.commit()
+    db.refresh(entity)
+    return entity

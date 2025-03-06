@@ -11,14 +11,18 @@ def get_db():
         yield db
     finally:
         db.close()
+        
+@router.post("/v1/entities", response_model=schemas.EntityResponse)
+def create_entity(entity: schemas.EntityCreate, db: Session = Depends(get_db)):
+    return crud.create_entity(db, entity)
 
 @router.post("/v1/reviews", response_model=schemas.ReviewResponse)
 def create_review(review: schemas.ReviewCreate, db: Session = Depends(get_db)):
     return crud.create_review(db, review)
 
-@router.get("/v1/reviews/product/{product_id}", response_model=list[schemas.ReviewResponse])
-def get_reviews(product_id: str, db: Session = Depends(get_db)):
-    return crud.get_reviews_by_product(db, product_id)
+@router.get("/v1/entities/{entity_id}/reviews", response_model=list[schemas.ReviewResponse])
+def get_reviews(entity_id: int, db: Session = Depends(get_db)):
+    return crud.get_reviews_by_entity(db, entity_id)
 
 @router.delete("/v1/reviews/{review_id}")
 def delete_review(review_id: int, db: Session = Depends(get_db)):

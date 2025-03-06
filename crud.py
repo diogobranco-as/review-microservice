@@ -33,3 +33,13 @@ def create_entity(db: Session, entity_data: schemas.EntityCreate):
     db.commit()
     db.refresh(entity)
     return entity
+
+def get_review_by_id_and_entity(db: Session, review_id: int, entity_id: int):
+    return db.query(models.Review).filter(models.Review.id == review_id, models.Review.entity_id == entity_id).first()
+
+def delete_review(db: Session, review_id: int):
+    review = db.query(models.Review).filter(models.Review.id == review_id).first()
+    if review:
+        db.delete(review)
+        db.commit()
+    return review

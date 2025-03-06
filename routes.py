@@ -24,16 +24,18 @@ def create_review(review: schemas.ReviewCreate, db: Session = Depends(get_db)):
 def get_reviews(entity_id: int, db: Session = Depends(get_db)):
     return crud.get_reviews_by_entity(db, entity_id)
 
-@router.delete("/v1/reviews/{review_id}")
-def delete_review(review_id: int, db: Session = Depends(get_db)):
-    review = crud.delete_review(db, review_id)
+@router.delete("/v1/entities/{entity_id}/reviews/{review_id}")
+def delete_review(entity_id: int, review_id: int, db: Session = Depends(get_db)):
+    review = crud.get_review_by_id_and_entity(db, review_id, entity_id)
     if not review:
         raise HTTPException(status_code=404, detail="Review not found")
+    crud.delete_review(db, review_id)
     return {"message": "Review deleted successfully"}
 
-@router.put("/v1/reviews/{review_id}", response_model=schemas.ReviewResponse)
-def update_review(review_id: int, review: schemas.ReviewUpdate, db: Session = Depends(get_db)):
-    updated_review = crud.update_review(db, review_id, review)
-    if not updated_review:
+@router.put("/v1/entities/{entity_id}/reviews/{review_id}", response_model=schemas.ReviewResponse)
+def update_review(entity_id: int, review_id: int, review: schemas.ReviewUpdate, db: Session = Depends(get_db)):
+    existing_review = crud.get_review_by_id_and_entity(db, review_id, entity_id)
+    if not existing_review:
         raise HTTPException(status_code=404, detail="Review not found")
+    updated_review = crud.update_review(db, review_id, review)
     return updated_review

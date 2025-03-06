@@ -21,12 +21,14 @@ class EntityCreate(BaseModel):
     entity_type: str
     entity_price: float
     entity_seller: str
+    entity_name: str
 
 class EntityResponse(BaseModel):
     id: int
     entity_type: str
     entity_price: float
     entity_seller: str
+    entity_name: str
     reviews: List[int] = []
 
     class Config:

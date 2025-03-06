@@ -18,10 +18,17 @@ def create_entity(entity: schemas.EntityCreate, db: Session = Depends(get_db)):
 
 @router.post("/v1/reviews", response_model=schemas.ReviewResponse)
 def create_review(review: schemas.ReviewCreate, db: Session = Depends(get_db)):
+    entity = crud.get_entity_by_id(db, review.entity_id) # check if entity exists
+    if not entity:
+        raise HTTPException(status_code=404, detail="Entity not found")
+    
     return crud.create_review(db, review)
 
 @router.get("/v1/entities/{entity_id}/reviews", response_model=list[schemas.ReviewResponse])
 def get_reviews(entity_id: int, db: Session = Depends(get_db)):
+    entity = crud.get_entity_by_id(db, entity_id) # check if the entity exists
+    if not entity:
+        raise HTTPException(status_code=404, detail="Entity not found")
     return crud.get_reviews_by_entity(db, entity_id)
 
 @router.delete("/v1/entities/{entity_id}/reviews/{review_id}")

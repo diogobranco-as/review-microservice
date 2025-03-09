@@ -16,6 +16,23 @@ def get_db():
 def create_entity(entity: schemas.EntityCreate, db: Session = Depends(get_db)):
     return crud.create_entity(db, entity)
 
+@router.get("/v1/entities", response_model=list[schemas.EntityResponse])
+def get_entities(db: Session = Depends(get_db)):
+    entities = crud.get_all_entities(db)
+    entity_responses = []
+    for entity in entities:
+        reviews = crud.get_reviews_by_entity(db, entity.id)
+        entity_response = schemas.EntityResponse(
+            id=entity.id,
+            entity_type=entity.entity_type,
+            entity_price=entity.entity_price,
+            entity_seller=entity.entity_seller,
+            entity_name=entity.entity_name,
+            reviews=[schemas.ReviewResponse.from_orm(review) for review in reviews]
+        )
+        entity_responses.append(entity_response)
+    return entity_responses
+
 @router.post("/v1/reviews", response_model=schemas.ReviewResponse)
 def create_review(review: schemas.ReviewCreate, db: Session = Depends(get_db)):
     entity = crud.get_entity_by_id(db, review.entity_id) # check if entity exists

@@ -16,6 +16,7 @@ class ReviewResponse(BaseModel):
 
     class Config:
         from_attributes = True
+        orm_mode = True
 
 class EntityCreate(BaseModel):
     entity_type: str
@@ -29,10 +30,11 @@ class EntityResponse(BaseModel):
     entity_price: float
     entity_seller: str
     entity_name: str
-    reviews: List[int] = []
+    reviews: List[ReviewResponse] = []
 
     class Config:
         from_attributes = True
+        orm_mode = True
 
 class ReviewUpdate(BaseModel):
     rating: Optional[float] = None

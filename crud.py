@@ -53,3 +53,6 @@ def delete_entity_and_reviews(db: Session, entity_id: int):
     # delete the entity
     db.query(models.Entity).filter(models.Entity.id == entity_id).delete()
     db.commit()
+
+def get_all_entities(db: Session):
+    return db.query(models.Entity).all()

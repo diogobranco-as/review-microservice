@@ -17,6 +17,13 @@ def get_db():
 def create_review(review: schemas.ReviewCreate, db: Session = Depends(get_db)):
     return crud.create_review(db, review)
 
+@router.get("/v1/reviews/{review_id}", response_model=schemas.ReviewResponse)
+def get_review(review_id: UUID, db: Session = Depends(get_db)):
+    review = crud.get_review(db, review_id)
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+    return review
+
 @router.get("/v1/entities/{entity_id}/reviews", response_model=list[schemas.ReviewResponse])
 def get_reviews(entity_id: UUID, db: Session = Depends(get_db)):
     return crud.get_reviews_by_entity(db, entity_id)
